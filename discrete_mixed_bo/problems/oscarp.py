@@ -13,8 +13,7 @@ import numpy as np
 import pandas as pd
 from torch import Tensor
 from typing import Any, Dict, Optional
-import random
-from random import randint
+from numpy.random import randint
 import torch
 
 from discrete_mixed_bo.problems.base import DiscreteTestProblem, DiscretizedBotorchTestProblem
@@ -40,8 +39,6 @@ class OscarP(DiscreteTestProblem):
             noise_std=noise_std,
             categorical_indices=list(range(self.dim)),
         )
-        self.seed = 55
-        random.seed(self.seed)
 
     def get_approximation(self, x_probe):
 
@@ -66,7 +63,7 @@ class OscarP(DiscreteTestProblem):
                     approximations = [row]
                     approximations_idxs = [self._dataset.index[idx]]
 
-        ret_idx = randint(0, len(approximations_idxs)-1)
+        ret_idx = randint(0, len(approximations_idxs))
 
         return approximations_idxs[ret_idx], approximations[ret_idx]
 
@@ -94,7 +91,7 @@ class OscarP(DiscreteTestProblem):
         matches = np.where((dataset_vals == x).all(axis=1))[0]
         if len(matches) == 0:
             raise ValueError("{} not found in dataset".format(params_))
-        idx = random.choice(matches)
+        idx = np.random.choice(matches)
         target_val = self._dataset.loc[idx, self._target_column]
 
         return target_val
@@ -108,7 +105,6 @@ class OscarP(DiscreteTestProblem):
         for elem in x_probe:
             idx_, x_ = self.get_approximation(elem)
             y_.append(self.find_point_in_dataset(x_))
+            #print(elem, x_)
 
-            print(elem, x_)
-
-        return torch.tensor(y_)
+        return torch.tensor(y_, dtype=torch.float64)

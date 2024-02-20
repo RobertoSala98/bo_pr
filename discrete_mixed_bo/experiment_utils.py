@@ -77,6 +77,9 @@ from discrete_mixed_bo.problems.welded_beam import WeldedBeam
 from discrete_mixed_bo.problems.xgboost_hp import XGBoostHyperparameter
 from discrete_mixed_bo.rffs import get_gp_sample_w_transforms
 from discrete_mixed_bo.problems.oscarp import OscarP
+from discrete_mixed_bo.problems.ligen import Ligen
+from discrete_mixed_bo.problems.stereomatch import Stereomatch
+from discrete_mixed_bo.problems.query26 import Query26
 
 
 def eval_problem(X: Tensor, base_function: DiscreteTestProblem) -> Tensor:
@@ -642,6 +645,50 @@ def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestP
             integer_indices=list(range(5)),
             integer_bounds=integer_bounds,
         )
+    elif name == "ligen":
+        dim = 8
+
+        ib_ = [(8, 72), (8, 72), (1, 5), (32, 256), (256, 1024), (10, 256), (1, 4), (1, 50)]
+        first_elements = [x[0] for x in ib_]
+        second_elements = [x[1] for x in ib_]
+        tensor_first = torch.tensor(first_elements)
+        tensor_second = torch.tensor(second_elements)
+        integer_bounds = torch.stack([tensor_first, tensor_second], dim=1).t()
+        
+        ligen = Ligen(dim=dim, negate=False)
+        return DiscretizedBotorchTestProblem(
+            problem=ligen,
+            integer_indices=list(range(8)),
+            integer_bounds=integer_bounds,
+        )
+    elif name == "query26":
+        dim = 2
+        ib_ = [(3, 26), (2, 90)]
+        first_elements = [x[0] for x in ib_]
+        second_elements = [x[1] for x in ib_]
+        tensor_first = torch.tensor(first_elements)
+        tensor_second = torch.tensor(second_elements)
+        integer_bounds = torch.stack([tensor_first, tensor_second], dim=1).t()
+        query26 = Query26(dim=dim, negate=False)
+        return DiscretizedBotorchTestProblem(
+            problem=query26,
+            integer_indices=list(range(2)),
+            integer_bounds=integer_bounds,
+        )  
+    elif name == "stereomatch":
+        dim = 4
+        ib_ = [(14, 64), (1, 3), (1, 16), (1, 32)]
+        first_elements = [x[0] for x in ib_]
+        second_elements = [x[1] for x in ib_]
+        tensor_first = torch.tensor(first_elements)
+        tensor_second = torch.tensor(second_elements)
+        integer_bounds = torch.stack([tensor_first, tensor_second], dim=1).t()
+        stereomatch = Stereomatch(dim=dim, negate=False)
+        return DiscretizedBotorchTestProblem(
+            problem=stereomatch,
+            integer_indices=list(range(4)),
+            integer_bounds=integer_bounds,
+        )  
     elif name == "cco":
         return CCO(
             data=kwargs.get("data"),
