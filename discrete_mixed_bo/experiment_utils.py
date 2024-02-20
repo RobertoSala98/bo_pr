@@ -76,6 +76,7 @@ from discrete_mixed_bo.problems.svm import SVMFeatureSelection
 from discrete_mixed_bo.problems.welded_beam import WeldedBeam
 from discrete_mixed_bo.problems.xgboost_hp import XGBoostHyperparameter
 from discrete_mixed_bo.rffs import get_gp_sample_w_transforms
+from discrete_mixed_bo.problems.oscarp import OscarP
 
 
 def eval_problem(X: Tensor, base_function: DiscreteTestProblem) -> Tensor:
@@ -627,6 +628,20 @@ def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestP
         return OilSorbent(negate=True)
     elif name == "mixed_oil":
         return OilSorbentMixed(negate=True)
+    elif name == "oscarp":
+        dim = 5
+        integer_bounds = torch.full((2, 5), 2)
+        integer_bounds[1, 0] = 4 
+        integer_bounds[1, 1] = 6 
+        integer_bounds[1, 2] = 4 
+        integer_bounds[1, 3] = 8 
+        integer_bounds[1, 4] = 4 
+        oscarp = OscarP(dim=dim, negate=False)
+        return DiscretizedBotorchTestProblem(
+            problem=oscarp,
+            integer_indices=list(range(5)),
+            integer_bounds=integer_bounds,
+        )
     elif name == "cco":
         return CCO(
             data=kwargs.get("data"),
@@ -634,7 +649,6 @@ def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestP
             scalarize=kwargs.get("scalarize", False),
             n_int_values=kwargs.get("n_int_values", 6),
         )
-
     elif name == "discrete_dtlz2":
         dim = 6
         integer_bounds = torch.zeros(2, 4)

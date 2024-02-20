@@ -1,0 +1,8 @@
+{
+    "iterations": 30,
+    "dim": 5,
+    "function_name": "oscarp",
+    "batch_size": 1,
+    "mc_samples": 1,
+    "optimization_kwargs": {}
+  }

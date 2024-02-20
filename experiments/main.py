@@ -12,6 +12,7 @@ import json
 import os
 import sys
 from typing import Any, Dict
+import warnings
 
 import torch
 
@@ -49,10 +50,13 @@ if __name__ == "__main__":
     save_callback = lambda data: torch.save(data, output_path)
     save_frequency = 5
     fetch_data(kwargs=kwargs)
-    run_one_replication(
-        seed=seed,
-        label=label,
-        save_callback=save_callback,
-        save_frequency=save_frequency,
-        **kwargs,
-    )
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        run_one_replication(
+            seed=seed,
+            label=label,
+            save_callback=save_callback,
+            save_frequency=save_frequency,
+            **kwargs,
+        )

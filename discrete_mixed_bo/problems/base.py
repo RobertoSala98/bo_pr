@@ -193,7 +193,7 @@ class DiscretizedBotorchTestProblem(DiscreteTestProblem):
         self.dim = problem.dim
         self.register_buffer("bounds", problem.bounds.clone())
         if integer_indices is not None:
-            self.bounds[:, integer_indices] = integer_bounds
+            self.bounds[:, integer_indices] = torch.tensor(integer_bounds, dtype=torch.double)
         if categorical_indices is not None:
             if (categorical_bounds[1] - categorical_bounds[0] < 2).any():
                 raise ValueError(

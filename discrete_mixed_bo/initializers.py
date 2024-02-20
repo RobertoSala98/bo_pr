@@ -28,7 +28,7 @@ from botorch.acquisition.knowledge_gradient import (
     _get_value_function,
     qKnowledgeGradient,
 )
-from botorch.acquisition.utils import is_nonnegative
+from botorch.optim.initializers import is_nonnegative
 from botorch.exceptions.errors import BotorchTensorDimensionError
 from botorch.exceptions.warnings import (
     BadInitialCandidatesWarning,

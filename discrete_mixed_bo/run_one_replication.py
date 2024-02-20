@@ -14,7 +14,7 @@ from typing import Callable, Dict, List, Optional
 import nevergrad as ng
 import numpy as np
 import torch
-from botorch.acquisition.utils import is_nonnegative
+from botorch.optim.initializers import is_nonnegative
 from botorch.fit import fit_gpytorch_model
 from botorch.models.transforms.outcome import Standardize
 from botorch.optim.optimize import optimize_acqf_discrete
