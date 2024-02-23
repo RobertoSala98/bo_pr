@@ -632,19 +632,7 @@ def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestP
     elif name == "mixed_oil":
         return OilSorbentMixed(negate=True)
     elif name == "oscarp":
-        dim = 5
-        integer_bounds = torch.full((2, 5), 2)
-        integer_bounds[1, 0] = 4 
-        integer_bounds[1, 1] = 6 
-        integer_bounds[1, 2] = 4 
-        integer_bounds[1, 3] = 8 
-        integer_bounds[1, 4] = 4 
-        oscarp = OscarP(dim=dim, negate=False)
-        return DiscretizedBotorchTestProblem(
-            problem=oscarp,
-            integer_indices=list(range(5)),
-            integer_bounds=integer_bounds,
-        )
+        return OscarP(negate=False)
     elif name == "ligen":
         dim = 8
 

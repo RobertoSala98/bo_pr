@@ -30,7 +30,7 @@ def analyse_single_result(filename):
                 return -float(line.split(keyword)[1].split(".\n")[0])
     return None
 
-repetitions = 2
+repetitions = 30
 seeds = randint(0,1e9,repetitions).tolist()
 
 algorithm = "pr__ei"

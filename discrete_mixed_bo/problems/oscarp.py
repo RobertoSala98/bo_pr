@@ -16,28 +16,28 @@ from typing import Any, Dict, Optional
 from numpy.random import randint
 import torch
 
-from discrete_mixed_bo.problems.base import DiscreteTestProblem, DiscretizedBotorchTestProblem
+from discrete_mixed_bo.problems.base import DiscreteTestProblem
+from botorch.test_functions.base import ConstrainedBaseTestProblem
 
 
-class OscarP(DiscreteTestProblem):
+class OscarP(DiscreteTestProblem, ConstrainedBaseTestProblem):
+    dim = 5
+    num_constraints = 2
 
     def __init__(
         self,
-        data: Optional[Dict[str, Any]] = './discrete_mixed_bo/problems/data/oscarp.csv',
-        dim: int = 5,
         noise_std: Optional[float] = None,
         negate: bool = False,
     ) -> None:
-        if data is not None:
-            self._dataset = pd.read_csv(data)
+        self._dataset = pd.read_csv('./discrete_mixed_bo/problems/data/oscarp.csv')
         self._keys = ["parallelism_ffmpeg-0","parallelism_librosa","parallelism_ffmpeg-1","parallelism_ffmpeg-2","parallelism_deepspeech"]
         self._bounds = [(2, 4), (2, 6), (2, 4), (2, 8), (2, 4)]
         self._target_column = "-cost"
-        self.dim = dim
+        self.idxs_ = []
         super().__init__(
             negate=negate,
             noise_std=noise_std,
-            categorical_indices=list(range(self.dim)),
+            integer_indices=list(range(len(self._keys))),
         )
 
     def get_approximation(self, x_probe):
@@ -92,6 +92,7 @@ class OscarP(DiscreteTestProblem):
         if len(matches) == 0:
             raise ValueError("{} not found in dataset".format(params_))
         idx = np.random.choice(matches)
+        self.idxs_.append(idx)
         target_val = self._dataset.loc[idx, self._target_column]
 
         return target_val
@@ -108,3 +109,12 @@ class OscarP(DiscreteTestProblem):
             #print(elem, x_)
 
         return torch.tensor(y_, dtype=torch.float64)
+
+    
+    def evaluate_slack_true(self, X: Tensor) -> Tensor:
+
+        import pdb; pdb.set_trace()
+
+        return torch.stack([1.0, 1.0], dim=0)
+
+
