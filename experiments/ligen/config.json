@@ -1,0 +1,9 @@
+{
+  "n_initial_points": 11,
+  "iterations": 60,
+  "dim": 8,
+  "function_name": "ligen",
+  "batch_size": 1,
+  "mc_samples": 1,
+  "optimization_kwargs": {}
+}
