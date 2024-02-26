@@ -58,5 +58,6 @@ if __name__ == "__main__":
             label=label,
             save_callback=save_callback,
             save_frequency=save_frequency,
+            output_path=output_path,
             **kwargs,
         )

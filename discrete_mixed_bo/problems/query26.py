@@ -12,6 +12,7 @@ from torch import Tensor
 from typing import Any, Dict, Optional
 from numpy.random import randint
 import torch
+import csv
 
 from discrete_mixed_bo.problems.base import DiscreteTestProblem
 from botorch.test_functions.base import ConstrainedBaseTestProblem
@@ -25,6 +26,7 @@ class Query26(DiscreteTestProblem, ConstrainedBaseTestProblem):
         self,
         noise_std: Optional[float] = None,
         negate: bool = False,
+        output_path: Optional[str] = ''
     ) -> None:
         self._dataset = pd.read_csv('./discrete_mixed_bo/problems/data/query26.csv')
         self._keys = ['#vm', 'ram']
@@ -37,6 +39,14 @@ class Query26(DiscreteTestProblem, ConstrainedBaseTestProblem):
             noise_std=noise_std,
             integer_indices=list(range(len(self._keys))),
         )
+
+        self.output_path_csv = output_path.split(".pt")[0] + ".csv"
+        header = ["index"] + self._keys + ["target", "feasible"]
+
+        with open(self.output_path_csv, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(header)
+            
 
     def get_approximation(self, x_probe):
 
@@ -95,17 +105,27 @@ class Query26(DiscreteTestProblem, ConstrainedBaseTestProblem):
 
         return target_val
 
-
+    
     def evaluate_true(self, X: Tensor) -> Tensor:
 
         x_probe = X.numpy()
 
         y_ = []
-        for elem in x_probe:
-            elem[1] /= 10
-            idx_, x_ = self.get_approximation(elem)
-            y_.append(self.find_point_in_dataset(x_))
-            #print(elem, x_)
+
+        with open(self.output_path_csv, 'a', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+
+            for elem in x_probe:
+                elem[1] /= 10
+                idx_, x_ = self.get_approximation(elem)
+                y_.append(self.find_point_in_dataset(x_))
+                #print(elem, x_)
+
+                target_ = y_[-1]
+                feasible_ = self._dataset.loc[idx_, self._bounds_column] >= 0 and self._dataset.loc[idx_, self._bounds_column] <= 300.00001
+
+                csv_data = [idx_] + x_.tolist() + [target_] + [feasible_]
+                writer.writerow(csv_data)
 
         return torch.tensor(y_, dtype=torch.float64)
 

@@ -90,6 +90,7 @@ def run_one_replication(
     acqf_kwargs: Optional[dict] = None,
     model_kwargs: Optional[dict] = None,
     save_frequency: Optional[int] = None,
+    output_path = '',
     dtype: torch.dtype = torch.double,
     device: Optional[torch.device] = None,
     save_callback: Optional[Callable[[Tensor], None]] = None,
@@ -131,7 +132,7 @@ def run_one_replication(
     optimization_kwargs = optimization_kwargs or {}
     # TODO: use model list when there are constraints
     # or multiple objectives
-    base_function = get_problem(name=function_name, dim=dim, **problem_kwargs)
+    base_function = get_problem(name=function_name, dim=dim, output_path=output_path, **problem_kwargs)
     base_function.to(**tkwargs)
     binary_dims = base_function.integer_indices
     binary_mask = base_function.integer_bounds[1] - base_function.integer_bounds[0] == 1

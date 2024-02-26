@@ -539,7 +539,7 @@ def get_acqf(
     return acq_func
 
 
-def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestProblem:
+def get_problem(name: str, dim: Optional[int] = None, output_path = '', **kwargs) -> DiscreteTestProblem:
     r"""Initialize the test function."""
     if name == "discrete_hartmann":
         dim = 6
@@ -632,13 +632,13 @@ def get_problem(name: str, dim: Optional[int] = None, **kwargs) -> DiscreteTestP
     elif name == "mixed_oil":
         return OilSorbentMixed(negate=True)
     elif name == "oscarp":
-        return OscarP(negate=False)
+        return OscarP(negate=False, output_path=output_path)
     elif name == "ligen":
-        return Ligen(negate=False)
+        return Ligen(negate=False, output_path=output_path)
     elif name == "query26":
-        return Query26(negate=False) 
+        return Query26(negate=False, output_path=output_path) 
     elif name == "stereomatch":
-        return Stereomatch(negate=False)
+        return Stereomatch(negate=False, output_path=output_path)
     elif name == "cco":
         return CCO(
             data=kwargs.get("data"),
