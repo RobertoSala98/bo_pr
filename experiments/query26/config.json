@@ -1,9 +1,0 @@
-{
-    "n_initial_points": 3,
-    "iterations": 30,
-    "dim": 2,
-    "function_name": "query26",
-    "batch_size": 1,
-    "mc_samples": 1,
-    "optimization_kwargs": {}
-  }

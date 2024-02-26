@@ -4,9 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-Problems with only binary variables.
-"""
 from typing import Optional
 
 import numpy as np
@@ -16,28 +13,29 @@ from typing import Any, Dict, Optional
 from numpy.random import randint
 import torch
 
-from discrete_mixed_bo.problems.base import DiscreteTestProblem, DiscretizedBotorchTestProblem
+from discrete_mixed_bo.problems.base import DiscreteTestProblem
+from botorch.test_functions.base import ConstrainedBaseTestProblem
 
 
-class Ligen(DiscreteTestProblem):
+class Ligen(DiscreteTestProblem, ConstrainedBaseTestProblem):
+    dim = 8
+    num_constraints = 2
 
     def __init__(
         self,
-        data: Optional[Dict[str, Any]] = './discrete_mixed_bo/problems/data/ligen.csv',
-        dim: int = 8,
         noise_std: Optional[float] = None,
         negate: bool = False,
     ) -> None:
-        if data is not None:
-            self._dataset = pd.read_csv(data)
+        self._dataset = pd.read_csv('./discrete_mixed_bo/problems/data/ligen.csv')
         self._keys = ['ALIGN_SPLIT', 'OPTIMIZE_SPLIT', 'OPTIMIZE_REPS', 'CUDA_THREADS', 'N_RESTART', 'CLIPPING', 'SIM_THRESH', 'BUFFER_SIZE']
         self._bounds = [(8, 72), (8, 72), (1, 5), (32, 256), (256, 1024), (10, 256), (1, 4), (1, 50)]
         self._target_column = '-RMSD^3*TIME'
-        self.dim = dim
+        self._bounds_column = "RMSD_0.75"
+        self.idxs_ = []
         super().__init__(
             negate=negate,
             noise_std=noise_std,
-            categorical_indices=list(range(self.dim)),
+            categorical_indices=list(range(len(self._keys))),
         )
 
     def get_approximation(self, x_probe):
@@ -92,6 +90,7 @@ class Ligen(DiscreteTestProblem):
         if len(matches) == 0:
             raise ValueError("{} not found in dataset".format(params_))
         idx = np.random.choice(matches)
+        self.idxs_.append(idx)
         target_val = self._dataset.loc[idx, self._target_column]
 
         return target_val
@@ -108,3 +107,14 @@ class Ligen(DiscreteTestProblem):
             #print(elem, x_)
 
         return torch.tensor(y_, dtype=torch.float64)
+
+    
+    def evaluate_slack_true(self, X: Tensor) -> Tensor:
+
+        bound_val = self._dataset.loc[self.idxs_, self._bounds_column].values
+        g1 = torch.from_numpy(bound_val)
+        g2 = torch.from_numpy(2.1 - bound_val)
+
+        self.idxs_ = []
+
+        return torch.stack([g1, g2], dim=-1)

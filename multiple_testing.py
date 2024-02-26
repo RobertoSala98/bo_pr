@@ -48,9 +48,9 @@ for dataset in ["oscarp", "stereomatch", "query26", "ligen"]:
 
     maximum = {
         "oscarp": 0.174361111,
-        "stereomatch": 36791.0,
-        "query26": 683682.0,
-        "ligen": 340.099251789615
+        "stereomatch": 40196.0,
+        "query26": 4079658.0,
+        "ligen": 567.312555400384
     }
 
     durations = []

@@ -4,9 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-Problems with only binary variables.
-"""
 from typing import Optional
 
 import numpy as np
@@ -33,6 +30,7 @@ class OscarP(DiscreteTestProblem, ConstrainedBaseTestProblem):
         self._keys = ["parallelism_ffmpeg-0","parallelism_librosa","parallelism_ffmpeg-1","parallelism_ffmpeg-2","parallelism_deepspeech"]
         self._bounds = [(2, 4), (2, 6), (2, 4), (2, 8), (2, 4)]
         self._target_column = "-cost"
+        self._bounds_column = "total_time"
         self.idxs_ = []
         super().__init__(
             negate=negate,
@@ -113,8 +111,12 @@ class OscarP(DiscreteTestProblem, ConstrainedBaseTestProblem):
     
     def evaluate_slack_true(self, X: Tensor) -> Tensor:
 
-        import pdb; pdb.set_trace()
+        bound_val = self._dataset.loc[self.idxs_, self._bounds_column].values
+        g1 = torch.from_numpy(bound_val)
+        g2 = torch.from_numpy(300.00001 - bound_val)
 
-        return torch.stack([1.0, 1.0], dim=0)
+        self.idxs_ = []
+
+        return torch.stack([g1, g2], dim=-1)
 
 

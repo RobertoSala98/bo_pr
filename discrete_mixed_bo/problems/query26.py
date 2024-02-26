@@ -4,9 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""
-Problems with only binary variables.
-"""
 from typing import Optional
 
 import numpy as np
@@ -16,28 +13,29 @@ from typing import Any, Dict, Optional
 from numpy.random import randint
 import torch
 
-from discrete_mixed_bo.problems.base import DiscreteTestProblem, DiscretizedBotorchTestProblem
+from discrete_mixed_bo.problems.base import DiscreteTestProblem
+from botorch.test_functions.base import ConstrainedBaseTestProblem
 
 
-class Query26(DiscreteTestProblem):
+class Query26(DiscreteTestProblem, ConstrainedBaseTestProblem):
+    dim = 2
+    num_constraints = 2
 
     def __init__(
         self,
-        data: Optional[Dict[str, Any]] = './discrete_mixed_bo/problems/data/query26.csv',
-        dim: int = 2,
         noise_std: Optional[float] = None,
         negate: bool = False,
     ) -> None:
-        if data is not None:
-            self._dataset = pd.read_csv(data)
+        self._dataset = pd.read_csv('./discrete_mixed_bo/problems/data/query26.csv')
         self._keys = ['#vm', 'ram']
         self._bounds = [(3, 26), (2, 90)]
         self._target_column = "-cost"
-        self.dim = dim
+        self._bounds_column = "time"
+        self.idxs_ = []
         super().__init__(
             negate=negate,
             noise_std=noise_std,
-            categorical_indices=list(range(self.dim)),
+            integer_indices=list(range(len(self._keys))),
         )
 
     def get_approximation(self, x_probe):
@@ -92,6 +90,7 @@ class Query26(DiscreteTestProblem):
         if len(matches) == 0:
             raise ValueError("{} not found in dataset".format(params_))
         idx = np.random.choice(matches)
+        self.idxs_.append(idx)
         target_val = self._dataset.loc[idx, self._target_column]
 
         return target_val
@@ -106,6 +105,17 @@ class Query26(DiscreteTestProblem):
             elem[1] /= 10
             idx_, x_ = self.get_approximation(elem)
             y_.append(self.find_point_in_dataset(x_))
-            print(elem, x_)
+            #print(elem, x_)
 
         return torch.tensor(y_, dtype=torch.float64)
+
+    
+    def evaluate_slack_true(self, X: Tensor) -> Tensor:
+
+        bound_val = self._dataset.loc[self.idxs_, self._bounds_column].values
+        g1 = torch.from_numpy(bound_val)
+        g2 = torch.from_numpy(205000.0 - bound_val)
+
+        self.idxs_ = []
+
+        return torch.stack([g1, g2], dim=-1)
