@@ -1,0 +1,10 @@
+Starting label pr__ei, seed 225020144, iteration 0, time: 0.00016307830810546875, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 1, time: 48.84841704368591, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 2, time: 99.46403503417969, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 3, time: 146.1796612739563, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 4, time: 194.98392486572266, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 5, time: 243.18310594558716, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 6, time: 289.72771763801575, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 7, time: 339.03894233703613, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 8, time: 388.25039863586426, current best obj: -0.337648278.
+Starting label pr__ei, seed 225020144, iteration 9, time: 436.0410463809967, current best obj: -0.329223611.

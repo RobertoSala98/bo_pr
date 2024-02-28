@@ -35,7 +35,7 @@ seeds = randint(0,1e9,repetitions).tolist()
 
 algorithm = "pr__ei"
 
-for dataset in ["oscarp", "stereomatch", "query26", "ligen"]:
+for dataset in ["query26", "ligen"]:
 
     print("\nDataset: %s" %dataset)
 
