@@ -122,7 +122,7 @@ class Query26(DiscreteTestProblem, ConstrainedBaseTestProblem):
                 #print(elem, x_)
 
                 target_ = y_[-1]
-                feasible_ = self._dataset.loc[idx_, self._bounds_column] >= 0 and self._dataset.loc[idx_, self._bounds_column] <= 300.00001
+                feasible_ = self._dataset.loc[idx_, self._bounds_column] >= 0 and self._dataset.loc[idx_, self._bounds_column] <= 205000
 
                 csv_data = [idx_] + x_.tolist() + [target_] + [feasible_]
                 writer.writerow(csv_data)
